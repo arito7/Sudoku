@@ -20,7 +20,7 @@ function Cell:init(index, row, col, xoffset, yoffset, solution)
     -- keeps track of a cell that has been solved
     self.solved = false
     -- candidates entered by user in pencil mode
-    self.candidates = {0,0,0,0,0,0,0,0,0}
+    self.candidates = {0, 0, 0, 0, 0, 0, 0, 0, 0}
     
     -- bools used to determine cell highlight when rendering
     self.selected = false
@@ -59,6 +59,27 @@ function Cell:addCandidate(num)
             self.candidates[num] = 0
         end
     end
+end
+
+--[[
+    Set this cell as a default provided cell
+    Meant to be used in Board class when setting up a board.
+]]
+function Cell:setAsDefault()
+    self.answer = self.solution
+    self._default = true
+    self.solved = true
+end
+
+--[[
+    Set this cell as an empty cell that needs to be solved by
+    user.
+    Meant to be used in Board class when setting up a board.
+]]
+function Cell:maskCell()
+    self.solution = 0
+    self._default = false
+    self.solved = false
 end
 
 function Cell:input(num, isValid, pencilMode)
@@ -126,6 +147,7 @@ function Cell:render()
         love.graphics.printf(self.solution, self.x, self.y + CELL_H / 2 - gFonts['cellFont']:getHeight() / 2, CELL_W, 'center')
     end
 
+    -- draw candidates in subscript
     for k, v in pairs(self.candidates) do
         if v ~= 0 then
             love.graphics.setColor(gColors['highlighted'])

@@ -3,6 +3,7 @@ PlayState = Class{__includes = BaseState}
 function PlayState:init()
     -- pencil mode button that comes below the puzzle
     pencilModeBtn = Button(gFonts['titleFont'], 'Pencil Mode', 0, CELL_H * 9 + BOARD_TOP_OFFSET + 16)
+    timer = 0
 end
 
 function PlayState:enter(difficulty)
@@ -13,6 +14,7 @@ end
 function PlayState:update(dt)
     -- keyboard navigation for the board
     -- get the current selected cell
+    timer = timer + dt 
     currentIndex = gBoard:getCurrentSelection()
     updated = false
     -- select a new cell
@@ -65,10 +67,14 @@ end
 
 function PlayState:render()
     -- print title
-    love.graphics.setColor(0.1, 0.1, 0.1, 1.0)
+    love.graphics.setColor(gColors['highlighted'])
     love.graphics.setFont(gFonts['titleFont'])
     love.graphics.printf('Sudoku', 0, BOARD_TOP_OFFSET / 2 - 14, WINDOW_WIDTH, 'center')
 
+    love.graphics.setFont(gFonts['titleFont'])
+    love.graphics.setColor(0, 1, 0, 1)
+    
+    love.graphics.printf('time: ' .. math.floor(timer), 0, BOARD_TOP_OFFSET / 2 - 14, WINDOW_WIDTH, 'right')
     -- draw pencil mode button
     pencilModeBtn:render()
     -- draw all cells

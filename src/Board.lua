@@ -51,18 +51,14 @@ function Board:generateRandomBoard(difficulty)
     self:_generateRandomBoard(1)
     
     for k, cell in pairs(self.cells) do
-        cell.answer = cell.solution
-        cell._default = true
-        cell.solved = true
+        cell:setAsDefault()
     end
 
     c = 0
     while true do
         r = math.random(1, 81)
         if self.cells[r].solution ~= 0 then
-            self.cells[r].solution = 0
-            self.cells[r]._default = false
-            self.cells[r].solved = false
+            self.cells[r]:maskCell()
             c = c + 1    
         end
         if c  == difficulty then
@@ -123,6 +119,11 @@ function Board:toggleMode()
 end
 
 
+--[[
+    Check if a board is solved.
+    Meant to be called from update to determine when a user 
+    has solved the puzzle.
+]]
 function Board:isComplete()
     for k, cell in pairs(self.cells) do
         if not cell.solved then
