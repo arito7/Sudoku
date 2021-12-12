@@ -6,6 +6,10 @@ function PlayState:init()
     pencilModeBtn = Button(gFonts['titleFont'], 'Pencil Mode', 0, CELL_H * 9 + BOARD_TOP_OFFSET + 16)
 end
 
+function PlayState:enter(params)
+    
+end
+
 function PlayState:update(dt)
     -- keyboard navigation for the board
     -- get the current selected cell
@@ -55,6 +59,7 @@ function PlayState:update(dt)
         -- if another cell was selected unselect this cell
         gBoard.cells[currentIndex].selected = false
     end  
+    gBoard:update(dt)
 end
 
 

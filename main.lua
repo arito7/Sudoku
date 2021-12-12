@@ -24,7 +24,10 @@ function love.load()
         ['invalidcell'] = {0.8, 0.2, 0.2, 0.9},
         ['defaultcell'] = {0.7,0.7,0.7},
         ['selectedcell'] = {0.7, 0.7, 0.7, 0.7},
-        ['userinputcell'] = {0.8,0.8,0.8}
+        ['selected_relation'] = {0.60, 0.7, 0.60, 0.6},
+        ['selected_weak_relation'] = {0.65, 0.7, 0.65, 0.3},
+        ['userinputcell'] = {0.8,0.8,0.8},
+        ['dark_green'] = {0.5, 0.9, 0.5, 1}
     }
 
     gFonts = {

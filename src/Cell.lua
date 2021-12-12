@@ -13,13 +13,36 @@ function Cell:init(index, row, col, xoffset, yoffset, solution)
     self.selected = false
     self.isvalid = true
     self.solution = solution or 0
+    self.answer = 0
     if solution ~= 0 then
         self._default = true
     end
+    self.relatedHighlight = false
+    self.weakRelationHighlight = false
     self.candidates = {0,0,0,0,0,0,0,0,0}
 end
 
-function Cell:update(dt)
+function Cell:update(dt, selectedCell)
+    local xb = selectedCell.row
+    local yb = selectedCell.col
+    if self.index ~= selectedCell.index and selectedCell.solution ~= 0 then
+
+        if self.solution == selectedCell.solution then
+            self.relatedHighlight = true
+        else
+            self.relatedHighlight = false
+        end
+
+        if self.row == selectedCell.row or self.col == selectedCell.col then
+            self.weakRelationHighlight = true
+        else
+            self.weakRelationHighlight = false
+        end
+
+    else
+        self.relatedHighlight = false
+        self.weakRelationHighlight = false
+    end
 end
 
 function Cell:addCandidate(num)
@@ -81,6 +104,13 @@ function Cell:render()
             -- color for user inputted values
             love.graphics.setColor(gColors['userinputcell'])
         end
+        
+        if self.relatedHighlight then
+            love.graphics.setColor(gColors['dark_green']) 
+        elseif self.weakRelationHighlight then
+            love.graphics.setColor(gColors['highlighted'])
+        end
+        
         love.graphics.setFont(gFonts['cellFont'])
         love.graphics.printf(self.solution, self.x, self.y + CELL_H / 2 - gFonts['cellFont']:getHeight() / 2, CELL_W, 'center')
     end
@@ -100,8 +130,14 @@ function Cell:render()
     
     -- highlight the cell if the cell is selected
     if self.selected then
-        love.graphics.setColor(gColors['selectedcell'])
-        love.graphics.rectangle('fill', self.x, self.y, CELL_W, CELL_H)  
+        love.graphics.setColor(gColors['selectedcell'])  
+        love.graphics.rectangle('fill',self.x, self.y, CELL_W, CELL_H)
+    elseif self.relatedHighlight then
+        love.graphics.setColor(gColors['selected_relation']) 
+        love.graphics.rectangle('fill',self.x, self.y, CELL_W, CELL_H)
+    elseif self.weakRelationHighlight then
+        love.graphics.setColor(gColors['selected_weak_relation'])
+        love.graphics.rectangle('fill',self.x, self.y, CELL_W, CELL_H)
     end
 end
 

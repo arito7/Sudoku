@@ -1,57 +1,74 @@
 Board = Class{}
 
-function Board:init(xoffset, yoffset)
-
+function Board:init(xoffset, yoffset, difficulty)
     -- top left corner of the board
     self.xoffset = xoffset
     self.yoffset = yoffset
-    self.cells = {}
+    self.difficulty = difficulty or EASY
+    -- bool to keep track of whether pencil mode is on or not
     self.pencilMode = false
-    -- create all cells
     
-    i = 0
-    -- puzzle = {
-    --     {4,1,5,0,6,9,0,7,0},
-    --     {0,0,3,0,0,1,0,2,0},
-    --     {0,0,0,4,0,3,5,0,0},
-    --     {6,7,2,1,0,0,0,0,4},
-    --     {8,3,0,0,0,0,0,5,7},        
-    --     {5,0,0,0,0,8,0,1,3},        
-    --     {2,8,0,0,0,7,1,0,6},        
-    --     {0,9,6,0,0,0,0,4,5},        
-    --     {1,5,0,6,0,0,8,0,0},        
-    --     }
-    -- for x = 0, 8, 1 do
-    --     for y = 0, 8, 1 do
-    --         table.insert(self.cells, Cell(i, x, y, self.xoffset, self.yoffset, 0))    
-    --         i = i + 1 
-    --     end
-    -- end
-    self:generateRandomBoard()
-    -- for kx, x in pairs(puzzle) do
-    --     for ky, value in pairs(x) do
-    --         table.insert(self.cells, Cell(i, kx - 1, ky - 1, self.xoffset, self.yoffset, value))    
-    --         i = i + 1 
-    --     end
-    -- end
+    self.cells = {}
+
+    self:generateRandomBoard(difficulty)
 end
 
+function Board:update(dt)
+    local index = self:getCurrentSelection()
+    selectedCell = self.cells[index]
+    for k, cell in pairs(self.cells) do
+        cell:update(dt, selectedCell)
+    end
+end
+
+function Board:render()
+    for k, cell in pairs(self.cells) do
+        cell:render()
+    end
+end
+
+
+--[[
+    Parent function for _generateRandomBoard()
+    because _generateRandomBoard is recursive and requires a parameter
+]]
 function Board:generateRandomBoard()
+    -- clearing cells before creating an empty board
     self.cells = {}
+    -- this will be the index assigned to each cell
     i = 0
+    -- an empty board for the random generator to work with
     for x = 0, 8, 1 do
         for y = 0, 8, 1 do
             table.insert(self.cells, Cell(i, x, y, self.xoffset, self.yoffset, 0))    
             i = i + 1 
         end
     end
+    -- creates a full random board
     self:_generateRandomBoard(1)
+    
+    for k, cell in pairs(self.cells) do
+        cell.answer = cell.solution
+    end
+
+    c = 0
+    while true do
+        r = math.random(1, 81)
+        if self.cells[r].solution ~= 0 then
+            self.cells[r].solution = 0
+            c = c + 1    
+        end
+        if c  == EASY then
+            break
+        end
+    end
 end
 
 
 --[[ 
     A recursive function that generates a random valid sudoku board
     @param i must be 1 for the very first call because tables in lua start at index 1 
+    should only be called from generateRandomBoard()
 ]]
 function Board:_generateRandomBoard(i)
     -- base case, there is no index 82 so this is the end of the board
@@ -70,7 +87,7 @@ function Board:_generateRandomBoard(i)
     while true do
         -- random has to be local or else the next iteration will 
         -- refer to the same number when it returns
-        local r = love.math.random(1,9)
+        local r = math.random(1,9)
         if inList(r, nums) then 
             goto continue 
         end
@@ -88,16 +105,21 @@ function Board:_generateRandomBoard(i)
         end
         ::continue::
     end
-    -- return true
 end    
 
+
+--[[
+    should be called from outside to change between pencil mode and input mode
+]]
 function Board:toggleMode()
     self.pencilMode = not self.pencilMode
 end
 
-function Board:update(dt)
-end
 
+--[[
+    returns the currently highlighted cell
+    there can only be one cell highlighted at a time
+]]
 function Board:getCurrentSelection()
     for k, cell in pairs(self.cells) do
         if cell.selected then
@@ -107,18 +129,26 @@ function Board:getCurrentSelection()
     return 40
 end
 
+
+--[[
+    Used to input a number into a cell
+    Will only pass valid values
+    Cell cannot confirm whether an input is valid
+    because cell is not aware of other cells,
+    therefore we verify the validity here before passing it off
+    to the cell.
+    Cell uses the validity value to render a invalid/valid input.
+]]
 function Board:insertSolution(num, index)
     cell = self.cells[index]
     isvalid = self:isValid(cell.row, cell.col, num)
     cell:input(num, isvalid, self.pencilMode)
 end
 
-function Board:render()
-    for k, cell in pairs(self.cells) do
-        cell:render()
-    end
-end
 
+--[[
+    Checks if a number is a valid input at given coordinates
+]]
 function Board:isValid(row, col, num)
     -- don't consider zero a wrong input because
     -- zero is a blank cell
