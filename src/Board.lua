@@ -8,26 +8,88 @@ function Board:init(xoffset, yoffset)
     self.cells = {}
     self.pencilMode = false
     -- create all cells
+    
     i = 0
-    puzzle = {
-        {4,1,5,0,6,9,0,7,0},
-        {0,0,3,0,0,1,0,2,0},
-        {0,0,0,4,0,3,5,0,0},
-        {6,7,2,1,0,0,0,0,4},
-        {8,3,0,0,0,0,0,5,7},        
-        {5,0,0,0,0,8,0,1,3},        
-        {2,8,0,0,0,7,1,0,6},        
-        {0,9,6,0,0,0,0,4,5},        
-        {1,5,0,6,0,0,8,0,0},        
-        }
-    for kx, x in pairs(puzzle) do
-        for ky, value in pairs(x) do
-            table.insert(self.cells, Cell(i, kx - 1, ky - 1, self.xoffset, self.yoffset, value))    
+    -- puzzle = {
+    --     {4,1,5,0,6,9,0,7,0},
+    --     {0,0,3,0,0,1,0,2,0},
+    --     {0,0,0,4,0,3,5,0,0},
+    --     {6,7,2,1,0,0,0,0,4},
+    --     {8,3,0,0,0,0,0,5,7},        
+    --     {5,0,0,0,0,8,0,1,3},        
+    --     {2,8,0,0,0,7,1,0,6},        
+    --     {0,9,6,0,0,0,0,4,5},        
+    --     {1,5,0,6,0,0,8,0,0},        
+    --     }
+    -- for x = 0, 8, 1 do
+    --     for y = 0, 8, 1 do
+    --         table.insert(self.cells, Cell(i, x, y, self.xoffset, self.yoffset, 0))    
+    --         i = i + 1 
+    --     end
+    -- end
+    self:generateRandomBoard()
+    -- for kx, x in pairs(puzzle) do
+    --     for ky, value in pairs(x) do
+    --         table.insert(self.cells, Cell(i, kx - 1, ky - 1, self.xoffset, self.yoffset, value))    
+    --         i = i + 1 
+    --     end
+    -- end
+end
+
+function Board:generateRandomBoard()
+    self.cells = {}
+    i = 0
+    for x = 0, 8, 1 do
+        for y = 0, 8, 1 do
+            table.insert(self.cells, Cell(i, x, y, self.xoffset, self.yoffset, 0))    
             i = i + 1 
         end
     end
-
+    self:_generateRandomBoard(1)
 end
+
+
+--[[ 
+    A recursive function that generates a random valid sudoku board
+    @param i must be 1 for the very first call because tables in lua start at index 1 
+]]
+function Board:_generateRandomBoard(i)
+    -- base case, there is no index 82 so this is the end of the board
+    if i == 82 then
+        return true
+    end
+
+    -- cell corresponding to parameter i
+    cell = self.cells[i]
+
+    -- nums has to be local or else the next iteration will 
+    -- refer to the same list
+    -- stores the used random candidates
+    local nums = {}
+
+    while true do
+        -- random has to be local or else the next iteration will 
+        -- refer to the same number when it returns
+        local r = love.math.random(1,9)
+        if inList(r, nums) then 
+            goto continue 
+        end
+        if self:isValid(cell.row, cell.col, r) then
+            cell.solution = r
+            if self:_generateRandomBoard(i + 1) then
+                return true
+            else
+                self.cells[i + 1].solution = 0
+            end
+        end    
+        table.insert(nums, r)
+        if table.getn(nums) == 9 then
+            return false
+        end
+        ::continue::
+    end
+    -- return true
+end    
 
 function Board:toggleMode()
     self.pencilMode = not self.pencilMode

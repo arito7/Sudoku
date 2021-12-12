@@ -6,3 +6,11 @@ function inList(val, list)
     end
     return false
 end
+
+function listSize(list)
+    count = 0
+    for k, v in pairs(list) do
+        count = count + 1
+    end
+    return count
+end

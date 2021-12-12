@@ -59,14 +59,14 @@ function Cell:render()
 
     -- set offset colors
     if inList(math.floor(self.index / 3), QUAD_OFFSET) then
-        love.graphics.setColor(0.1, 0.1, 0.1, 1.0)        
+        love.graphics.setColor(gColors['offsetcell'])        
     else
-        love.graphics.setColor(0.3, 0.3, 0.3, 1.0)
+        love.graphics.setColor(gColors['cell'])
     end
 
     -- set color for invalid cells
     if not self.isvalid then
-        love.graphics.setColor(0.8, 0.2, 0.2, 0.9)
+        love.graphics.setColor(gColors['invalidcell'])
     end
 
     -- draw the cell
@@ -76,19 +76,19 @@ function Cell:render()
     if self.solution ~= 0 then
         if self._default then
             -- color for default values given in puzzle
-            love.graphics.setColor(0.7,0.7,0.7)
+            love.graphics.setColor(gColors['defaultcell'])
         else
             -- color for user inputted values
-            love.graphics.setColor(0.8,0.8,0.8)
+            love.graphics.setColor(gColors['userinputcell'])
         end
-        love.graphics.setFont(cellFont)
-        love.graphics.printf(self.solution, self.x, self.y + CELL_H / 2 - cellFont:getHeight() / 2, CELL_W, 'center')
+        love.graphics.setFont(gFonts['cellFont'])
+        love.graphics.printf(self.solution, self.x, self.y + CELL_H / 2 - gFonts['cellFont']:getHeight() / 2, CELL_W, 'center')
     end
 
     for k, v in pairs(self.candidates) do
         if v ~= 0 then
-            love.graphics.setColor(1,1,1)
-            love.graphics.setFont(subscriptFont)
+            love.graphics.setColor(gColors['highlighted'])
+            love.graphics.setFont(gFonts['subscriptFont'])
             -- 00 01 02   01 02 03     k - 1 / 3 gives row
             -- 10 11 12   04 05 06     k - 1 % 3 gives col 
             -- 20 21 22   07 08 09
@@ -100,7 +100,7 @@ function Cell:render()
     
     -- highlight the cell if the cell is selected
     if self.selected then
-        love.graphics.setColor(0.7, 0.7, 0.7, 0.7)
+        love.graphics.setColor(gColors['selectedcell'])
         love.graphics.rectangle('fill', self.x, self.y, CELL_W, CELL_H)  
     end
 end

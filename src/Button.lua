@@ -8,7 +8,7 @@ function Button:init(font, text, x, y)
     self.selected = false
 end
 
-function Button:update()
+function Button:update(dt)
     
 end
 
@@ -26,9 +26,9 @@ end
 
 function Button:render()
     if self.selected then
-        love.graphics.setColor(0.1, 0.1, 0.1, 1.0)
+        love.graphics.setColor(gColors['highlighted'])
     else
-        love.graphics.setColor(0.3, 0.3, 0.3, 0.5)
+        love.graphics.setColor(gColors['nothighlighted'])
     end
     love.graphics.printf(self.text, 0, self.y, WINDOW_WIDTH, 'center')
 end
