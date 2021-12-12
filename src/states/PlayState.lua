@@ -1,13 +1,13 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
-    gBoard = Board((WINDOW_WIDTH - CELL_W * 9) / 2, BOARD_TOP_OFFSET)
-    -- gBoard:generateRandomBoard()
+    -- pencil mode button that comes below the puzzle
     pencilModeBtn = Button(gFonts['titleFont'], 'Pencil Mode', 0, CELL_H * 9 + BOARD_TOP_OFFSET + 16)
 end
 
-function PlayState:enter(params)
-    
+function PlayState:enter(difficulty)
+    print('difficulty is', difficulty)
+    gBoard = Board((WINDOW_WIDTH - CELL_W * 9) / 2, BOARD_TOP_OFFSET, DIFFICULTY[difficulty])
 end
 
 function PlayState:update(dt)

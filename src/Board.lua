@@ -4,13 +4,13 @@ function Board:init(xoffset, yoffset, difficulty)
     -- top left corner of the board
     self.xoffset = xoffset
     self.yoffset = yoffset
-    self.difficulty = difficulty or EASY
+    self.difficulty = difficulty or DIFFICULTY[1]
     -- bool to keep track of whether pencil mode is on or not
     self.pencilMode = false
     
     self.cells = {}
 
-    self:generateRandomBoard(difficulty)
+    self:generateRandomBoard(self.difficulty)
 end
 
 function Board:update(dt)
@@ -18,6 +18,9 @@ function Board:update(dt)
     selectedCell = self.cells[index]
     for k, cell in pairs(self.cells) do
         cell:update(dt, selectedCell)
+    end
+    if self:isComplete() then
+        print('Puzzle Solved')
     end
 end
 
@@ -32,7 +35,7 @@ end
     Parent function for _generateRandomBoard()
     because _generateRandomBoard is recursive and requires a parameter
 ]]
-function Board:generateRandomBoard()
+function Board:generateRandomBoard(difficulty)
     -- clearing cells before creating an empty board
     self.cells = {}
     -- this will be the index assigned to each cell
@@ -49,6 +52,8 @@ function Board:generateRandomBoard()
     
     for k, cell in pairs(self.cells) do
         cell.answer = cell.solution
+        cell._default = true
+        cell.solved = true
     end
 
     c = 0
@@ -56,9 +61,11 @@ function Board:generateRandomBoard()
         r = math.random(1, 81)
         if self.cells[r].solution ~= 0 then
             self.cells[r].solution = 0
+            self.cells[r]._default = false
+            self.cells[r].solved = false
             c = c + 1    
         end
-        if c  == EASY then
+        if c  == difficulty then
             break
         end
     end
@@ -115,6 +122,15 @@ function Board:toggleMode()
     self.pencilMode = not self.pencilMode
 end
 
+
+function Board:isComplete()
+    for k, cell in pairs(self.cells) do
+        if not cell.solved then
+            return false
+        end
+    end
+    return true
+end
 
 --[[
     returns the currently highlighted cell

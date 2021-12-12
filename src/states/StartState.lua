@@ -29,8 +29,8 @@ function StartState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         gSounds['confirm']:play()
 
-        if highlighted == 1 then
-            gStateMachine:change('play')
+        if inList(highlighted, {1,2,3,4}) then
+            gStateMachine:change('play', highlighted)
         elseif highlighted == table.getn(menuOptions) then
             love.event.quit()
         end

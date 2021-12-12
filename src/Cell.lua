@@ -1,7 +1,8 @@
 Cell = Class{}
 
-
+-- used to color offset quadrants a different color
 QUAD_OFFSET = {1, 4, 7, 9, 11, 12, 14, 15, 17, 19, 22, 25}
+
 function Cell:init(index, row, col, xoffset, yoffset, solution)
     self.index = index
     -- index position for cell 
@@ -10,16 +11,21 @@ function Cell:init(index, row, col, xoffset, yoffset, solution)
     -- x y coordinate of top left
     self.x = self.col * CELL_W + xoffset
     self.y = self.row * CELL_H + yoffset
-    self.selected = false
+    -- if the current solution in the cell is valid or not
     self.isvalid = true
+    -- user input answer can be right or wrong
     self.solution = solution or 0
+    -- the correct answer for the cell
     self.answer = 0
-    if solution ~= 0 then
-        self._default = true
-    end
+    -- keeps track of a cell that has been solved
+    self.solved = false
+    -- candidates entered by user in pencil mode
+    self.candidates = {0,0,0,0,0,0,0,0,0}
+    
+    -- bools used to determine cell highlight when rendering
+    self.selected = false
     self.relatedHighlight = false
     self.weakRelationHighlight = false
-    self.candidates = {0,0,0,0,0,0,0,0,0}
 end
 
 function Cell:update(dt, selectedCell)
@@ -46,22 +52,27 @@ function Cell:update(dt, selectedCell)
 end
 
 function Cell:addCandidate(num)
-    if not inList(num, self.candidates) then
-        self.candidates[num] = num
-    else
-        self.candidates[num] = 0
+    if not self._default then 
+        if not inList(num, self.candidates) then
+            self.candidates[num] = num
+        else
+            self.candidates[num] = 0
+        end
     end
 end
 
 function Cell:input(num, isValid, pencilMode)
     -- insert only if the cell is not a default provided cell
-    if not self._default then
+    if not self._default and not self.solved then
         if pencilMode then
             self:addCandidate(num)
         else 
             self.solution = num
             self.isvalid = isValid
             self.candidates = {0,0,0,0,0,0,0,0,0}
+            if self.solution == self.answer then
+                self.solved = true
+            end
         end
     end
 end
