@@ -74,7 +74,7 @@ function PlayState:render()
     love.graphics.setFont(gFonts['titleFont'])
     love.graphics.setColor(0, 1, 0, 1)
     
-    love.graphics.printf('time: ' .. math.floor(timer), 0, BOARD_TOP_OFFSET / 2 - 14, WINDOW_WIDTH, 'right')
+    love.graphics.printf(string.format('time: %02d:%02d',math.floor(timer / 60),math.floor(timer % 60)), 0, BOARD_TOP_OFFSET / 2 - 14, WINDOW_WIDTH, 'right')
     -- draw pencil mode button
     pencilModeBtn:render()
     -- draw all cells
