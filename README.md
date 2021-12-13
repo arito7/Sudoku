@@ -11,11 +11,16 @@ The game features 4 difficulty levels.
 
 #### Files
 [BaseState.lua](src/states/BaseState.lua)
+
 Template for States used within the StateMachine
+
 [StartState.lua](src/states/StartState.lua)
+
 Menu screen state.
 Ability to choose difficulty or close application.
+
 [PlayState.lua](src/states/PlayState.lua)
+
 Game screen state.
 Renders a sudoku board
 - a timer on top right
