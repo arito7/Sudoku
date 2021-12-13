@@ -21,12 +21,12 @@ Renders a sudoku board
 - a timer on top right
 - a pencil mode button 
 [Board.lua](src/Board.lua)
-###Handles
+### Handles
 - the logic for generating a random puzzle.
 - inputs by user
 - board rendering
 [Cell.lua](src/Cell.lua)
-###Handles
+### Handles
 - each cell Board.lua renders is an instance of this class
 - all candidates provided for given cell
 - highlighting depending on user selection
