@@ -7,10 +7,10 @@ CELL_H = WINDOW_WIDTH / 9 - 1
 CELL_W = WINDOW_WIDTH / 9 - 1 
 
 -- DIFFICULTY = {
---     ['EASY'] = 44,
---     ['MEDIUM'] = 50,
---     ['HARD'] = 58,
---     ['EXTREME'] = 65
+--     ['easy'] = 44,
+--     ['medium'] = 50,
+--     ['hard'] = 58,
+--     ['extreme'] = 65
 -- }
 
-DIFFICULTY = {1,20,25,30}
+DIFFICULTY = {1,10,20,30}

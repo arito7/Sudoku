@@ -5,6 +5,7 @@ require 'src/Dependencies'
 -- local ground = love.graphics.newImage('ground.png')
 
 function love.load()
+    print( 22 % 9)
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
     
     -- initialize our nearest-neighbor filter

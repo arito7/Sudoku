@@ -13,10 +13,8 @@ function Board:init(xoffset, yoffset, difficulty)
     self.cells = {}
 
     self:generateRandomBoard(self.difficulty)
-    for k,v in pairs(self.cells) do
-        print(k .. ' xy: ' .. v.row .. v.col)
-    end
 end
+
 
 function Board:update(dt)
     local index = self:getCurrentSelection()
@@ -28,7 +26,7 @@ end
 
 function Board:render()
     for k, cell in pairs(self.cells) do
-        cell:render(k)
+        cell:render()
     end
 end
 
@@ -40,14 +38,9 @@ end
 function Board:generateRandomBoard(difficulty)
     -- clearing cells before creating an empty board
     self.cells = {}
-    -- this will be the index assigned to each cell
-    i = 0
     -- an empty board for the random generator to work with
-    for x = 0, 8, 1 do
-        for y = 0, 8, 1 do
-            table.insert(self.cells, Cell(i, x, y, self.xoffset, self.yoffset, 0))    
-            i = i + 1 
-        end
+    for i = 1, 81, 1 do
+        table.insert(self.cells, Cell(i, self.xoffset, self.yoffset, 0))    
     end
     -- creates a full random board
     self:_generateRandomBoard(1)
@@ -87,7 +80,7 @@ function Board:_generateRandomBoard(i)
         if inList(r, nums) then 
             goto continue 
         end
-        if self:isValid(cell.row, cell.col, r) then
+        if self:isValid(cell:getRow(), cell:getCol(), r) then
             cell.solution = r
             if self:_generateRandomBoard(i + 1) then
                 return true
@@ -107,6 +100,7 @@ end
 function Board:shuffle(difficulty)
     local used = {}
     local i = 0
+    -- mask cells depending on difficulty
     while true do
         local randomi = math.random(1,40)
         if not inList(randomi, used) then
@@ -122,54 +116,57 @@ function Board:shuffle(difficulty)
         end
     end
     
-    index1 = math.random(1, 3)
-    index2 = index1
-    while index1 == index2 do
-        index2 = math.random(1,3)
+    -- swap rows and columns
+    rolls = {{1, 3}, {4, 6}, {7, 9}}
+    for k, set in pairs(rolls) do       
+        index1 = math.random(set[1], set[2])
+        index2 = index1
+        while index1 == index2 do
+            index2 = math.random(set[1], set[2])
+        end
+        print(index1, index2)
+        self:swapRows(index1, index2)
+        self:swapColumns(index1, index2)
     end
-    self:swapRows(index1, index2)
-    self:swapColumns(index1, index2)
-
-    -- index1 = math.random(4, 6)
-    -- index2 = index1
-    -- while index1 == index2 do
-    --     index2 = math.random(4, 6)
-    -- end
-    -- self:swapRows(index1, index2)
-    -- self:swapColumns(index1, index2)
-
-    -- index1 = math.random(7, 9)
-    -- index2 = index1
-    -- while index1 == index2 do
-    --     index2 = math.random(7, 9)
-    -- end
-    -- self:swapRows(index1, index2)
-    -- self:swapColumns(index1, index2)
 
 end
 
+
+--[[
+    Swaps 2 rows
+]]
 function Board:swapRows(row1, row2)
-    local index1 = row1 * 9
-    local index2 = row2 * 9
+    local index1 = (row1 - 1) * 9
+    local index2 = (row2 - 1) * 9
     for i = 1, 9, 1 do
         i1 = index1 + i
         i2 = index2 + i
         temp = self.cells[i1]
         self.cells[i1] = self.cells[i2]
-        self.cells[i2] = temp 
+        self.cells[i2] = temp
+        self.cells[i1].index = i1
+        self.cells[i2].index = i2 
     end    
 end
 
 
+--[[
+    Swaps 2 columns
+]]
 function Board:swapColumns(col1, col2)
-    for i = 1, 9, 1 do
-        i1 = col1 + 9 * i
-        i2 = col2 + 9 * i
+    for i = 0, 8, 1 do
+        local i1 = col1 + 9 * i
+        local i2 = col2 + 9 * i
         temp = self.cells[i1]
         self.cells[i1] = self.cells[i2]
         self.cells[i2] = temp
+        -- switch the indexes because cell render uses 
+        -- the index to determine its position
+        self.cells[i1].index = i1
+        self.cells[i2].index = i2
     end
 end
+
 
 --[[
     should be called from outside to change between pencil mode and input mode
@@ -192,6 +189,7 @@ function Board:isComplete()
     end
     return true
 end
+
 
 --[[
     returns the currently highlighted cell
@@ -218,7 +216,7 @@ end
 ]]
 function Board:insertSolution(num, index)
     cell = self.cells[index]
-    isValid = self:isValid(cell.row, cell.col, num)
+    isValid = self:isValid(cell:getRow(), cell:getCol(), num)
     cell:input(num, isValid, self.pencilMode)
     if isValid then
         for k, v in pairs(self.cells) do
@@ -238,16 +236,16 @@ function Board:isValid(row, col, num)
         return true
     end
     
-    xb = math.floor(row / 3) * 3
-    yb = math.floor(col / 3) * 3
+    local xb = math.floor(row / 3) * 3
+    local yb = math.floor(col / 3) * 3
     for k, cell in pairs(self.cells) do
         -- check if solution is same and the cell is not the same as parameter cell
         -- converting the row col to string for easy comparison of row,col combination
-        if cell.solution == num and row .. col ~= cell.row .. cell.col then
-            if cell.col == col or cell.row == row then
+        if cell.solution == num and row .. col ~= cell:getRow() .. cell:getCol() then
+            if cell:getCol() == col or cell:getRow() == row then
                 return false
             end
-            if inList(cell.row, {xb, xb + 1, xb + 2}) and inList(cell.col, {yb, yb + 1, yb + 2}) then
+            if inList(cell:getRow(), {xb, xb + 1, xb + 2}) and inList(cell:getCol(), {yb, yb + 1, yb + 2}) then
                 return false
             end
         end
