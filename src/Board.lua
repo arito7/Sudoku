@@ -4,6 +4,8 @@ function Board:init(xoffset, yoffset, difficulty)
     -- top left corner of the board
     self.xoffset = xoffset
     self.yoffset = yoffset
+
+    -- the number of cells to mask
     self.difficulty = difficulty or DIFFICULTY[1]
     -- bool to keep track of whether pencil mode is on or not
     self.pencilMode = false
@@ -11,6 +13,9 @@ function Board:init(xoffset, yoffset, difficulty)
     self.cells = {}
 
     self:generateRandomBoard(self.difficulty)
+    for k,v in pairs(self.cells) do
+        print(k .. ' xy: ' .. v.row .. v.col)
+    end
 end
 
 function Board:update(dt)
@@ -19,14 +24,11 @@ function Board:update(dt)
     for k, cell in pairs(self.cells) do
         cell:update(dt, selectedCell)
     end
-    if self:isComplete() then
-        print('Puzzle Solved')
-    end
 end
 
 function Board:render()
     for k, cell in pairs(self.cells) do
-        cell:render()
+        cell:render(k)
     end
 end
 
@@ -49,22 +51,13 @@ function Board:generateRandomBoard(difficulty)
     end
     -- creates a full random board
     self:_generateRandomBoard(1)
-    
+
+    -- set all cells as default for new board    
     for k, cell in pairs(self.cells) do
         cell:setAsDefault()
     end
 
-    c = 0
-    while true do
-        r = math.random(1, 81)
-        if self.cells[r].solution ~= 0 then
-            self.cells[r]:maskCell()
-            c = c + 1    
-        end
-        if c  == difficulty then
-            break
-        end
-    end
+    self:shuffle(difficulty)
 end
 
 
@@ -110,6 +103,73 @@ function Board:_generateRandomBoard(i)
     end
 end    
 
+
+function Board:shuffle(difficulty)
+    local used = {}
+    local i = 0
+    while true do
+        local randomi = math.random(1,40)
+        if not inList(randomi, used) then
+            self.cells[41 - randomi].solution = 0
+            self.cells[41 - randomi]:maskCell()
+            self.cells[41 + randomi].solution = 0
+            self.cells[41 + randomi]:maskCell()
+            table.insert(used, randomi)
+            i = i + 1
+        end
+        if i == difficulty then
+            break
+        end
+    end
+    
+    index1 = math.random(1, 3)
+    index2 = index1
+    while index1 == index2 do
+        index2 = math.random(1,3)
+    end
+    self:swapRows(index1, index2)
+    self:swapColumns(index1, index2)
+
+    -- index1 = math.random(4, 6)
+    -- index2 = index1
+    -- while index1 == index2 do
+    --     index2 = math.random(4, 6)
+    -- end
+    -- self:swapRows(index1, index2)
+    -- self:swapColumns(index1, index2)
+
+    -- index1 = math.random(7, 9)
+    -- index2 = index1
+    -- while index1 == index2 do
+    --     index2 = math.random(7, 9)
+    -- end
+    -- self:swapRows(index1, index2)
+    -- self:swapColumns(index1, index2)
+
+end
+
+function Board:swapRows(row1, row2)
+    local index1 = row1 * 9
+    local index2 = row2 * 9
+    for i = 1, 9, 1 do
+        i1 = index1 + i
+        i2 = index2 + i
+        temp = self.cells[i1]
+        self.cells[i1] = self.cells[i2]
+        self.cells[i2] = temp 
+    end    
+end
+
+
+function Board:swapColumns(col1, col2)
+    for i = 1, 9, 1 do
+        i1 = col1 + 9 * i
+        i2 = col2 + 9 * i
+        temp = self.cells[i1]
+        self.cells[i1] = self.cells[i2]
+        self.cells[i2] = temp
+    end
+end
 
 --[[
     should be called from outside to change between pencil mode and input mode
@@ -158,8 +218,13 @@ end
 ]]
 function Board:insertSolution(num, index)
     cell = self.cells[index]
-    isvalid = self:isValid(cell.row, cell.col, num)
-    cell:input(num, isvalid, self.pencilMode)
+    isValid = self:isValid(cell.row, cell.col, num)
+    cell:input(num, isValid, self.pencilMode)
+    if isValid then
+        for k, v in pairs(self.cells) do
+            v:removeCandidate(cell)
+        end
+    end
 end
 
 

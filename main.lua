@@ -5,7 +5,6 @@ require 'src/Dependencies'
 -- local ground = love.graphics.newImage('ground.png')
 
 function love.load()
-    print(DIFFICULTY[1])
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
     
     -- initialize our nearest-neighbor filter
@@ -32,6 +31,7 @@ function love.load()
 
     gFonts = {
         ['titleFont'] = love.graphics.newFont('fonts/flappy.ttf', 28),
+        ['mediumFont'] = love.graphics.newFont('fonts/flappy.ttf', 20),
         ['cellFont'] = love.graphics.newFont('fonts/Exo2-SemiBold.ttf', 28),
         ['subscriptFont'] = love.graphics.newFont('fonts/Exo2-Regular.ttf', 13)
     }
@@ -43,7 +43,8 @@ function love.load()
 
     gStateMachine = StateMachine {
         ['start'] = function() return StartState() end,
-        ['play'] = function() return PlayState() end
+        ['play'] = function() return PlayState() end,
+        ['complete'] = function() return CompleteState() end,
     }
     gStateMachine:change('start')
 

@@ -22,6 +22,8 @@ function Cell:init(index, row, col, xoffset, yoffset, solution)
     -- candidates entered by user in pencil mode
     self.candidates = {0, 0, 0, 0, 0, 0, 0, 0, 0}
     
+    self.selectedCellValue = 0
+
     -- bools used to determine cell highlight when rendering
     self.selected = false
     self.relatedHighlight = false
@@ -29,6 +31,7 @@ function Cell:init(index, row, col, xoffset, yoffset, solution)
 end
 
 function Cell:update(dt, selectedCell)
+    self.selectedCellValue = selectedCell.solution
     local xb = selectedCell.row
     local yb = selectedCell.col
     if self.index ~= selectedCell.index and selectedCell.solution ~= 0 then
@@ -61,6 +64,28 @@ function Cell:addCandidate(num)
     end
 end
 
+--[[
+    Removes candidates from this cell depending on the
+    passsed cell
+]]
+function Cell:removeCandidate(cell)
+    if not self._default and cell.solution ~= 0 then
+        xb = math.floor(cell.row / 3) * 3
+        yb = math.floor(cell.col / 3) * 3
+        -- if param cell solution is in self.candidates and param cell is not this cell
+        if inList(cell.solution, self.candidates) and self.row .. self.col ~= cell.row .. cell.col then
+            if cell.col == self.col or cell.row == self.row or 
+                inList(self.row, {xb, xb + 1, xb + 2}) and inList(self.col, {yb, yb + 1, yb + 2}) then
+                for k, c in pairs(self.candidates) do
+                    if c == cell.solution then
+                        c = 0
+                    end
+                    print(self.row..' '..self.col..': '..k..': '..c)
+                end
+            end
+        end
+    end
+end
 --[[
     Set this cell as a default provided cell
     Meant to be used in Board class when setting up a board.
@@ -98,7 +123,11 @@ function Cell:input(num, isValid, pencilMode)
     end
 end
 
-function Cell:render()
+-- cell render will use k [its index position in the dictionary]
+-- to draw its position so it is not dependent on its variables
+-- this way it can withstand position changes within the dictionary when shuffling
+-- and still draw correctly.
+function Cell:render(k)
     
     -- 00 01 02   [03 04 05]  06 07 08      00 01 02  03 04 05  06 07 08
     -- 10 11 12   [13 14 15]  16 17 18      09 10 11  12 13 14  15 16 17     
@@ -113,7 +142,7 @@ function Cell:render()
     -- 80 81 82   [83 84 85]  86 87 88      72 73 74  75 76 77  78 79 80
 
     -- set offset colors
-    if inList(math.floor(self.index / 3), QUAD_OFFSET) then
+    if inList(math.floor(k / 3), QUAD_OFFSET) then
         love.graphics.setColor(gColors['offsetcell'])        
     else
         love.graphics.setColor(gColors['cell'])
@@ -125,7 +154,7 @@ function Cell:render()
     end
 
     -- draw the cell
-    love.graphics.rectangle('fill', self.x+1, self.y+1, CELL_W-2, CELL_H-2)    
+    love.graphics.rectangle('fill', self.x + 1, self.y + 1, CELL_W - 2, CELL_H - 2)    
 
     -- draw number for cells where solution value is not 0
     if self.solution ~= 0 then
@@ -150,8 +179,11 @@ function Cell:render()
     -- draw candidates in subscript
     for k, v in pairs(self.candidates) do
         if v ~= 0 then
-            love.graphics.setColor(gColors['highlighted'])
             love.graphics.setFont(gFonts['subscriptFont'])
+            love.graphics.setColor(gColors['highlighted'])
+            if v == self.selectedCellValue then
+                love.graphics.setColor(gColors['dark_green'])
+            end
             -- 00 01 02   01 02 03     k - 1 / 3 gives row
             -- 10 11 12   04 05 06     k - 1 % 3 gives col 
             -- 20 21 22   07 08 09
@@ -165,9 +197,7 @@ function Cell:render()
     if self.selected then
         love.graphics.setColor(gColors['selectedcell'])  
         love.graphics.rectangle('fill',self.x, self.y, CELL_W, CELL_H)
-    elseif self.relatedHighlight then
-        love.graphics.setColor(gColors['selected_relation']) 
-        love.graphics.rectangle('fill',self.x, self.y, CELL_W, CELL_H)
+    -- weak relations are cells that are in the same row and col
     elseif self.weakRelationHighlight then
         love.graphics.setColor(gColors['selected_weak_relation'])
         love.graphics.rectangle('fill',self.x, self.y, CELL_W, CELL_H)

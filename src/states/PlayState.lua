@@ -7,16 +7,19 @@ function PlayState:init()
 end
 
 function PlayState:enter(difficulty)
-    print('difficulty is', difficulty)
-    gBoard = Board((WINDOW_WIDTH - CELL_W * 9) / 2, BOARD_TOP_OFFSET, DIFFICULTY[difficulty])
+    gBoard = Board((WINDOW_WIDTH - CELL_W * 9) / 2, BOARD_TOP_OFFSET, difficulty)
 end
 
 function PlayState:update(dt)
+    
+    -- time passed
+    timer = timer + dt 
+    
     -- keyboard navigation for the board
     -- get the current selected cell
-    timer = timer + dt 
     currentIndex = gBoard:getCurrentSelection()
     updated = false
+
     -- select a new cell
     if love.keyboard.wasPressed('up') and currentIndex > 9 then
         gBoard.cells[currentIndex - 9].selected = true
@@ -57,11 +60,18 @@ function PlayState:update(dt)
         love.event.quit()
     end
 
+    if gBoard:isComplete() then
+        print('Puzzle Solved')
+        gStateMachine:change('complete', timer)
+    end
+
     if updated then
         -- if another cell was selected unselect this cell
         gBoard.cells[currentIndex].selected = false
     end  
+
     gBoard:update(dt)
+
 end
 
 
@@ -71,10 +81,10 @@ function PlayState:render()
     love.graphics.setFont(gFonts['titleFont'])
     love.graphics.printf('Sudoku', 0, BOARD_TOP_OFFSET / 2 - 14, WINDOW_WIDTH, 'center')
 
-    love.graphics.setFont(gFonts['titleFont'])
-    love.graphics.setColor(0, 1, 0, 1)
+    love.graphics.setFont(gFonts['mediumFont'])
+    love.graphics.setColor(gColors['highlighted'])
     
-    love.graphics.printf(string.format('time: %02d:%02d',math.floor(timer / 60),math.floor(timer % 60)), 0, BOARD_TOP_OFFSET / 2 - 14, WINDOW_WIDTH, 'right')
+    love.graphics.printf(string.format('time: %02d:%02d',math.floor(timer / 60),math.floor(timer % 60)), 0, BOARD_TOP_OFFSET - gFonts['mediumFont']:getHeight() - 5, WINDOW_WIDTH - 5, 'right')
     -- draw pencil mode button
     pencilModeBtn:render()
     -- draw all cells

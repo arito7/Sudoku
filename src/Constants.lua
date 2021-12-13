@@ -13,4 +13,4 @@ CELL_W = WINDOW_WIDTH / 9 - 1
 --     ['EXTREME'] = 65
 -- }
 
-DIFFICULTY = {6,50,55,60}
+DIFFICULTY = {1,20,25,30}

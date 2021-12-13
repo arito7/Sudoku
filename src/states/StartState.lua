@@ -26,11 +26,12 @@ function StartState:update(dt)
     end
 
     -- confirm whichever option we have selected to change screens
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') or love.keyboard.wasPressed('kpenter') then
         gSounds['confirm']:play()
 
         if inList(highlighted, {1,2,3,4}) then
-            gStateMachine:change('play', highlighted)
+            -- passing highlighted to play, which sets the difficulty
+            gStateMachine:change('play', DIFFICULTY[highlighted])
         elseif highlighted == table.getn(menuOptions) then
             love.event.quit()
         end
