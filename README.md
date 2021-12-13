@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Sudoku
 #### Video Demo:
 #### Description:
@@ -38,18 +37,3 @@ Constants used in this application.
 Difficulty settings and screen sizes can be changed here.
 [Util.lua](src/Util.lua)
 Custom utility functions used
-
-=======
-# Sudoku
-#### Video Demo:
-#### Description:
-A sudoku game made in lua using LOVE2D.
-
-The game features 4 difficulty levels.
-- Easy
-- Medium
-- Hard
-- Extreme
-
-[mina.lua](main.lua)
->>>>>>> 59c795889d2695624fa5d750edd5ea2632e86e7f
