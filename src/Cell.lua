@@ -115,11 +115,7 @@ function Cell:removeCandidate(cell)
         if inList(cell.solution, self.candidates) and self:getRow() .. self:getCol() ~= cell:getRow() .. cell:getCol() then
             if cell:getCol() == self:getCol() or cell:getRow() == self:getRow() or 
                 inList(self:getRow(), {xb, xb + 1, xb + 2}) and inList(self:getCol(), {yb, yb + 1, yb + 2}) then
-                for k, c in pairs(self.candidates) do
-                    if c == cell.solution then
-                        c = 0
-                    end
-                end
+                self.candidates[cell.solution] = 0
             end
         end
     end
@@ -151,11 +147,10 @@ end
 function Cell:input(num, isValid, pencilMode)
     -- insert only if the cell is not a default provided cell
     if not self._default and not self.solved then
-        if pencilMode then
+        if pencilMode and isValid then
             self.solution = 0
-            self.isvalid = true
             self:addCandidate(num)
-        else 
+        elseif not pencilMode then
             self.solution = num
             self.isvalid = isValid
             self.candidates = {}
@@ -172,7 +167,7 @@ end
 -- this way it can withstand position changes within the dictionary when shuffling
 -- and still draw correctly.
 function Cell:render()
-    -- set offset colors
+    -- set offset colors applies to all cells regardless of condition
     if inList(math.floor((self.index - 1) / 3), QUAD_OFFSET) then
         love.graphics.setColor(gColors['offsetcell'])        
     else
@@ -194,6 +189,7 @@ function Cell:render()
 
     -- draw number for cells where solution value is not 0
     if self.solution ~= 0 then
+        
         if self._default then
             -- color for default values given in puzzle
             love.graphics.setColor(gColors['defaultcell'])
@@ -214,8 +210,13 @@ function Cell:render()
         if not self.isvalid then
             love.graphics.setColor(gColors['invalidcell'])
         end
-        
         love.graphics.setFont(gFonts['cellFont'])
+        
+        if self.solved and not self._default then
+            love.graphics.setFont(gFonts['solvedFont'])
+            love.graphics.setColor(gColors['highlighted'])
+        end
+
         love.graphics.printf(self.solution, self:getX(), self:getY() + CELL_H / 2 - gFonts['cellFont']:getHeight() / 2, CELL_W, 'center')
     end
 
@@ -224,6 +225,7 @@ function Cell:render()
         if candidate ~= 0 then
             love.graphics.setFont(gFonts['subscriptFont'])
             love.graphics.setColor(gColors['highlighted'])
+            -- if the candidate is the same as the selected cell, color the candidate green
             if candidate == self.selectedCellValue then
                 love.graphics.setColor(gColors['dark_green'])
             end
