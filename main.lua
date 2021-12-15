@@ -71,23 +71,6 @@ function love.update(dt)
     love.keyboard.keysPressed = {}
 end
 
--- function love.mousepressed(x, y, button, istouch, presses)
---     if x > pencilModeBtn.x and x < pencilModeBtn.x + pencilModeBtn:getWidth() and y > pencilModeBtn.y and y < pencilModeBtn.y + pencilModeBtn:getHeight() then
---         pencilModeBtn:onClick()
---         gBoard:toggleMode()
---     end
--- end
-
--- function love.mousemoved(x, y, dx, dy, istouch)
---     for k, cell in pairs(gBoard.cells) do
---         if x > cell.x and x < cell.x + CELL_W and y > cell.y and y < cell.y + CELL_H then
---             cell.selected = true
---         else
---             cell.selected = false
---         end
---     end
--- end
-
 function love.draw()
      -- draw the background starting at top left 
     love.graphics.setBackgroundColor(0.1, 0.1, 0.1)

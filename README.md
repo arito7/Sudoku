@@ -77,15 +77,18 @@ This allows the algorithm to choose only valid values from the list of candidate
 #### Generation of a random Sudoku board
 - Due to the nature of this algorithm it is able to generate a valid random Sudoku board as long as an array with only empty values
 is passed and selecting a random number between 1 to 9 each iteration allowing for a random board.
-- After a random board is generated a certain number of mirrored cells are masked (displays as an empty cell for the user to solve)
+- After a random board is generated a certain number of mirrored cells are masked (masking: displays as an empty cell for the user to solve)
 The number of cells to be masked are determined by the difficulty selected. 
 Difficulty is simply defined by the number of cells masked, the higher the difficulty the more cells are masked.
 eg: mirror cell for cell 1 is cell 81. mirror cell for 40 is 42 *absolute value from center cell 41; is the mirrored cell
 Rather than randomnly masking cells; this method of masking allows the board to be a solvable board.
-- After masking is generated rows and columns within the same quadrant are shuffled. These shuffles of rows and columns retain the validity of the board.
+- After masking, rows and columns within the same quadrant are shuffled. These shuffles of rows and columns retain the validity of the board.
 eg: row 1, 2, 3 are in the same quadrant, two rows are randomnly selected and swapped.
 eg: columns 4, 5, 6 are in the same quadrant, two columns are randomly selected and swapped.
 
+#### Known areas with room for improvement
+- The generated puzzle is solvable but is not necessarily a puzzle with a unique solution. (A unique solution puzzle will only have 1 way to solve the puzzle)
+- Difficulty is only determined by the number of masked cells. Instead difficulty can be weighted by the techniques required to solve the board.
 
 
 
