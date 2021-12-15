@@ -59,15 +59,10 @@ Pseduocode
 1. choose a number from a set containing the numbers 1 to 9
 2. insert the number into current cell
 3. check if the board is still valid
-
     if it is still valid
-    
         repeat steps for next cell 
-        
     if it is not valid
-    
         repeat steps for this cell using the next number in the set
-        
             if we exhausted all numbers from the set return false
             
 ```
