@@ -45,6 +45,7 @@ end
 
 function StartState:render()
     -- title
+    love.graphics.setColor(gColors['dark_green'])
     love.graphics.setFont(gFonts['titleFont'])
     love.graphics.printf("SUDOKU", 0, WINDOW_HEIGHT / 6,
         WINDOW_WIDTH, 'center')

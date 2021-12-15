@@ -1,5 +1,5 @@
 # Sudoku
-#### Video Demo:
+#### Video Demo: https://youtu.be/qmKu8yqhQaM
 #### Description:
 A sudoku game made in lua using LOVE2D.
 

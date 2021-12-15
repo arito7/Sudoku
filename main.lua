@@ -77,15 +77,15 @@ function love.draw()
 	
     gStateMachine:render()
 
-    displayFPS()
+    -- displayFPS()
 end
 
 --[[
     Renders the current FPS.
 ]]
-function displayFPS()
-    -- simple FPS display across all states
-    love.graphics.setFont(gFonts['titleFont'])
-    love.graphics.setColor(0, 1, 0, 1)
-    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 5, 5)
-end
+-- function displayFPS()
+--     -- simple FPS display across all states
+--     love.graphics.setFont(gFonts['titleFont'])
+--     love.graphics.setColor(0, 1, 0, 1)
+--     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 5, 5)
+-- end

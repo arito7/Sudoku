@@ -57,7 +57,7 @@ function PlayState:update(dt)
         pencilModeBtn:onClick()
         gBoard:toggleMode()
     elseif love.keyboard.wasPressed('escape') then
-        love.event.quit()
+        gStateMachine:change('start')
     end
 
     if gBoard:isComplete() then
