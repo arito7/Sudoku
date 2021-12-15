@@ -198,6 +198,12 @@ function Cell:render()
             love.graphics.setColor(gColors['userinputcell'])
         end
         
+        
+        if self.solved and not self._default then
+            love.graphics.setFont(gFonts['solvedFont'])
+            love.graphics.setColor(gColors['highlighted'])
+        end
+
         if self.selected then
             -- color for selected cell
             love.graphics.setColor(gColors['dark_green'])
@@ -212,11 +218,6 @@ function Cell:render()
         end
         love.graphics.setFont(gFonts['cellFont'])
         
-        if self.solved and not self._default then
-            love.graphics.setFont(gFonts['solvedFont'])
-            love.graphics.setColor(gColors['highlighted'])
-        end
-
         love.graphics.printf(self.solution, self:getX(), self:getY() + CELL_H / 2 - gFonts['cellFont']:getHeight() / 2, CELL_W, 'center')
     end
 

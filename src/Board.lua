@@ -115,6 +115,9 @@ function Board:shuffle(difficulty)
             break
         end
     end
+
+    self.cells[41].solution = 0
+    self.cells[41]:maskCell()
     
     -- swap rows and columns
     rolls = {{1, 3}, {4, 6}, {7, 9}}

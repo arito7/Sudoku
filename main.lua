@@ -26,7 +26,7 @@ function love.load()
         ['selectedcell'] = {0.7, 0.7, 0.7, 0.7},
         ['selected_relation'] = {0.60, 0.7, 0.60, 0.6},
         ['selected_weak_relation'] = {0.65, 0.7, 0.65, 0.3},
-        ['userinputcell'] = {0.8,0.8,0.8},
+        ['userinputcell'] = {0.8, 0.8, 0.8},
         ['dark_green'] = {0.5, 0.9, 0.5, 1}
     }
 
@@ -34,6 +34,7 @@ function love.load()
         ['titleFont'] = love.graphics.newFont('fonts/flappy.ttf', 28),
         ['mediumFont'] = love.graphics.newFont('fonts/flappy.ttf', 20),
         ['cellFont'] = love.graphics.newFont('fonts/Exo2-SemiBold.ttf', 28),
+        ['solvedFont'] = love.graphics.newFont('fonts/Exo2-SemiBold.ttf', 30),
         ['subscriptFont'] = love.graphics.newFont('fonts/Exo2-Regular.ttf', 13)
     }
 
@@ -47,6 +48,7 @@ function love.load()
         ['play'] = function() return PlayState() end,
         ['complete'] = function() return CompleteState() end,
     }
+    
     gStateMachine:change('start')
 
     love.keyboard.keysPressed = {}
