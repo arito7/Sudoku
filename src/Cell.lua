@@ -72,7 +72,7 @@ function Cell:update(dt, selectedCell)
     self.selectedCellValue = selectedCell.solution
     local xb = selectedCell:getRow()
     local yb = selectedCell:getCol()
-    if self.index ~= selectedCell.index and selectedCell.solution ~= 0 then
+    if self.index ~= selectedCell.index then
 
         if self.solution == selectedCell.solution then
             self.relatedHighlight = true
