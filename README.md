@@ -3,6 +3,8 @@
 #### Description:
 A sudoku game made in lua using LOVE2D.
 
+![Game screenshot](/Screenshot.png)
+
 The game features 4 difficulty levels.
 - Easy
 - Medium
